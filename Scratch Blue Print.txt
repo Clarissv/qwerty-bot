@@ -1,0 +1,88 @@
+npm install mongodb
+MongoDB Connection String
+mongodb+srv://adolebit:<db_password>@qwerty.l6yekbw.mongodb.net/?appName=qwerty
+
+So I want to make a multipurpose bot for my store in discord
+
+It will be a ticket bot with information displays and a room maker (channel) and role maker
+
+Context: This discord server sell "slots" in a game for a x8 boost ingame
+Example: 
+I want to experience x8 boost in the game 
+I purchase slot in the discord server
+The seller add friend me in game so the buyer can join the seller ingame server with x8 boost
+
+Feature 1
+
+Ticket (Buyer Side)
+
+Ticket panel using dropdown and modal
+This dropdown auto updates
+- Staff using command (example) /start server
+- Bot automatically identifies the server number based on active servers starting from 1
+Buyers choose the server from the dropdown list
+After choosing which server, I'm not sure how the interaction chain should be but basically they tell the bot how many slots they are purchasing (1 slot = 1 account), and after that interaction, the user must fill Roblox name based on the stated slots. 
+Example: They stated purchasing 6 slot, next interaction (idk what feature to use) they will type down 6 Roblox usernames to submit
+After those interaction are done, send an embed with confirmation consisting the server information & Roblox usernames the user listed
+Ticket channel is created after confirm button is pressed
+
+
+Ticket (Seller Side)
+After ticket is created, bot sends an approval embed with buttons in a staff only channel
+In the ticket channel, bot pings staff role & user that created the channel with embed of server information & Roblox usernames
+It also sends an image in embed which will be the payment embed (methods) and the image being QRIS (using media link, configured to the bot)
+Once the staff verify the payment, they will go to the approval channel and press approve / decline which will if approved, gives the user a role to access the server chatroom
+Example
+Buyer purchase got approved (server 1)
+Bot gives a specific role to user (server 1 role)
+The role has chat access to the server chat room (server 1 chat room)
+Seller can communicate with the buyer in that specific channel (server 1 buyers and seller)
+Applies to server 2, 3, and so on
+
+Panel
+1 Panel for members which is an embed with drop down that auto updates configured by staff
+This panel shows information of the server, time, and slot
+
+1 Panel for staff to update boost time of a server
+Example: Server 1 is started (opened) for members to purchase slot, but boost is not yet turned on, after slot is fully filled which is 20 accounts, staff can "activate" server boost
+Lets say server 1 is full 20/20, staff can go to the panel to "start" the boost and it will update the server information in the panel for members
+
+Embed example
+Server 1 - x hours
+Open: Yes/No
+Price: IDR xxx,xxx
+Boost activated: Yes/No 
+Members:
+1.
+2.
+so on
+
+What bot needs to do (According to what I know and workflow wise)
+1. Server panel embed with dropdown in a specific channel sent by staff
+- Members can use this panel to view active servers
+- After member choose a server to view, bot send the list of the server the user choose from dropdown
+
+2. Auto role & auto channel
+- The role must be unique to a server
+Example: All slots buyer in server 1 gets the same role
+
+3. Server panel for staff to "active" boost
+
+4. Auto update dropdown/embeds
+
+Commands for staff and developer to use
+1. /configure
+- Chatroom category - bot create channel for server chatrooms there
+- Staff role - role id for permissions to run the staff commands and functions
+- Approval channel - channel id for bot to send approvals after user creates ticket
+- Audit log channel - channel id for audits sent as a message
+- QRIS media link - set image url for the image in payment method embed
+
+2. /send 
+- server panel (member usage)
+- admin panel (for staff to start a server boost "activate")
+- purchase panel (for members to open a ticket choosing which server slot they are buying
+
+3. /open server 'boost duration' 'price'
+- boost duration in hours (starts countdown after staff activate from admin panel)
+- price in IDR
