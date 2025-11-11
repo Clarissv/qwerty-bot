@@ -9,6 +9,11 @@ module.exports = {
         const slotCount = parseInt(parts[2]);
 
         try {
+            // Delete the "Enter Roblox Usernames" message
+            await interaction.message.delete().catch(() => {
+                console.log('Could not delete enter usernames message');
+            });
+
             // Show modal to collect Roblox usernames
             const modal = new ModalBuilder()
                 .setCustomId(`robloxNames_modal_${serverId}_${slotCount}`)
