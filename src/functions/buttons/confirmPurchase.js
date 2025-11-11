@@ -214,19 +214,17 @@ module.exports = {
                 // Don't fail the whole process
             }
 
-            // Update the confirmation message (remove buttons)
+            // Delete the confirmation message (to prevent further interaction)
             try {
-                await interaction.message.edit({
-                    components: []
-                }).catch(() => {
-                    // Ignore error if message was already deleted or can't be edited
-                    console.log('Could not edit confirmation message (already deleted or ephemeral)');
+                await interaction.message.delete().catch(() => {
+                    // Ignore error if message was already deleted
+                    console.log('Could not delete confirmation message (already deleted)');
                 });
             } catch (err) {
                 // Silent fail - not critical
             }
 
-            // Send success message
+            // Send success message and auto-delete after 10 seconds
             await interaction.editReply({
                 embeds: [embedBuilder.successEmbed(
                     'Ticket Created Successfully!',
@@ -237,9 +235,19 @@ module.exports = {
                     `2. Complete your payment\n` +
                     `3. Wait for staff verification\n` +
                     `4. Once approved, you'll get access to the server chatroom!\n\n` +
-                    `Thank you for your purchase! 🎉`
+                    `Thank you for your purchase! 🎉\n\n` +
+                    `_This message will be deleted in 10 seconds..._`
                 )]
             });
+
+            // Delete the success message after 10 seconds
+            setTimeout(async () => {
+                try {
+                    await interaction.deleteReply();
+                } catch (err) {
+                    // Silent fail if already deleted
+                }
+            }, 10000);
 
         } catch (error) {
             console.error('Error creating ticket:', error);
