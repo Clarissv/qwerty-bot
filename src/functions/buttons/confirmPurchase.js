@@ -63,7 +63,7 @@ module.exports = {
             let ticketChannel;
             try {
                 ticketChannel = await interaction.guild.channels.create({
-                name: `ticket-${interaction.user.username}-${Date.now().toString().slice(-4)}`,
+                name: `ticket-${interaction.user.username}-server${serverId}`,
                 type: ChannelType.GuildText,
                 parent: config.ticketCategoryId,
                 permissionOverwrites: [
