@@ -32,10 +32,21 @@ module.exports = {
         ];
 
         if (server.boostActivated && server.boostEndTime) {
-            const timeRemaining = Math.floor((new Date(server.boostEndTime) - new Date()) / 1000 / 60 / 60);
+            const endTime = new Date(server.boostEndTime);
+            const now = new Date();
+            const timeRemaining = Math.floor((endTime - now) / 1000 / 60 / 60);
+            
+            if (timeRemaining > 0) {
+                fields.push({
+                    name: '⏰ Time Remaining',
+                    value: `${timeRemaining.toFixed(1)} hours`,
+                    inline: true
+                });
+            }
+            
             fields.push({
-                name: '⏰ Time Remaining',
-                value: timeRemaining > 0 ? `${timeRemaining.toFixed(1)} hours` : 'Expired',
+                name: timeRemaining > 0 ? '🕐 Ends At' : '⏰ Ended At',
+                value: `<t:${Math.floor(endTime.getTime() / 1000)}:F>`,
                 inline: true
             });
         }
