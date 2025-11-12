@@ -22,6 +22,14 @@ module.exports = {
                 .setDescription('Price per slot in IDR')
                 .setRequired(true)
                 .setMinValue(1000)
+        )
+        .addStringOption(option =>
+            option
+                .setName('username')
+                .setDescription('Staff Roblox username for this server')
+                .setRequired(true)
+                .setMinLength(3)
+                .setMaxLength(20)
         ),
 
     async execute(interaction, client) {
@@ -30,6 +38,7 @@ module.exports = {
         try {
             const duration = interaction.options.getInteger('duration');
             const price = interaction.options.getInteger('price');
+            const staffUsername = interaction.options.getString('username');
 
             // Get config
             const config = await database.getConfig();
@@ -82,7 +91,8 @@ module.exports = {
             // Update server with role and channel
             await database.updateServer(server.serverId, {
                 roleId: role.id,
-                channelId: channel.id
+                channelId: channel.id,
+                staffUsername: staffUsername
             });
 
             // Send welcome message to the server channel
@@ -115,6 +125,33 @@ module.exports = {
                 }]
             });
 
+            // Send staff add message and pin it
+            const staffMessage = await channel.send({
+                content: '📌 **IMPORTANT**',
+                embeds: [{
+                    title: '👤 Add Staff on Roblox',
+                    description: `Please add the staff member on Roblox to get access to the server!\n\n` +
+                        `🎮 **Roblox Username:** \`${staffUsername}\`\n\n` +
+                        `**Steps:**\n` +
+                        `1. Open Roblox and search for the username above\n` +
+                        `2. Send a friend request\n` +
+                        `3. Wait for the staff to accept and add you to the server\n\n` +
+                        `⚠️ Make sure you've added the staff before the boost starts!`,
+                    color: 0xFF6B6B,
+                    thumbnail: {
+                        url: 'https://cdn.discordapp.com/emojis/1234567890.png' // You can replace with a Roblox icon if you have one
+                    },
+                    footer: {
+                        text: 'This message is pinned for your convenience'
+                    }
+                }]
+            });
+
+            // Pin the staff message
+            await staffMessage.pin().catch(err => {
+                console.error('Failed to pin staff message:', err);
+            });
+
             // Log to audit channel
             if (config.auditLogChannelId) {
                 const auditChannel = await client.channels.fetch(config.auditLogChannelId).catch(() => null);
@@ -139,8 +176,10 @@ module.exports = {
                     `**Channel:** ${channel}\n` +
                     `**Role:** ${role}\n` +
                     `**Duration:** ${duration} hours\n` +
-                    `**Price:** IDR ${price.toLocaleString()} per slot\n\n` +
-                    `✅ All panels have been updated automatically.`
+                    `**Price:** IDR ${price.toLocaleString()} per slot\n` +
+                    `**Staff Username:** \`${staffUsername}\`\n\n` +
+                    `✅ All panels have been updated automatically.\n` +
+                    `📌 Staff add message has been posted and pinned in the channel.`
                 )]
             });
 
