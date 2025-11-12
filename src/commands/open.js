@@ -139,7 +139,7 @@ module.exports = {
                         `⚠️ Make sure you've added the staff before the boost starts!`,
                     color: 0xFF6B6B,
                     thumbnail: {
-                        url: 'https://cdn.discordapp.com/emojis/1234567890.png' // You can replace with a Roblox icon if you have one
+                        url: 'https://cdn.discordapp.com/attachments/1436948934378393643/1438047091321733213/2b4d17b961e35d3aa54c2e666dae3eed.png?ex=69157538&is=691423b8&hm=652534873f357de14a00929d8779a5f7de71ca23e9a74976b1eb7eda89972229&' // You can replace with a Roblox icon if you have one
                     },
                     footer: {
                         text: 'This message is pinned for your convenience'
