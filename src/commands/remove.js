@@ -37,11 +37,14 @@ module.exports = {
                 });
             }
 
-            // Find purchase with this username in this server
+            // Find purchase with this username in this server (case-insensitive)
             const purchase = await database.db.collection('purchases').findOne({
                 serverId: serverId,
-                robloxUsernames: username,
-                isActive: true
+                robloxUsernames: { 
+                    $elemMatch: { 
+                        $regex: new RegExp(`^${username}$`, 'i') 
+                    } 
+                }
             });
 
             if (!purchase) {
@@ -56,8 +59,15 @@ module.exports = {
             // Get the user ID from purchase
             const userId = purchase.userId;
 
+            // Find the exact username match (case-insensitive)
+            const exactUsername = purchase.robloxUsernames.find(
+                name => name.toLowerCase() === username.toLowerCase()
+            );
+
             // Remove the username from the purchase
-            const updatedUsernames = purchase.robloxUsernames.filter(name => name !== username);
+            const updatedUsernames = purchase.robloxUsernames.filter(
+                name => name.toLowerCase() !== username.toLowerCase()
+            );
 
             if (updatedUsernames.length === 0) {
                 // If this was the only username, delete the entire purchase
@@ -81,7 +91,7 @@ module.exports = {
                             embeds: [embedBuilder.infoEmbed(
                                 'Purchase Removed',
                                 `${interaction.user} removed <@${userId}>'s entire purchase from Server ${serverId}\n\n` +
-                                `**Removed Username:** \`${username}\`\n` +
+                                `**Removed Username:** \`${exactUsername}\`\n` +
                                 `**Reason:** All slots removed (was only purchase)`
                             )]
                         });
@@ -91,7 +101,7 @@ module.exports = {
                 await interaction.editReply({
                     embeds: [embedBuilder.successEmbed(
                         'Purchase Removed',
-                        `Successfully removed \`${username}\` from Server ${serverId}.\n\n` +
+                        `Successfully removed \`${exactUsername}\` from Server ${serverId}.\n\n` +
                         `This was <@${userId}>'s only slot, so the entire purchase was removed.\n` +
                         `The role has been removed from the user.`
                     )]
@@ -113,7 +123,7 @@ module.exports = {
                                 'Slot Removed',
                                 `${interaction.user} removed a slot from Server ${serverId}\n\n` +
                                 `**User:** <@${userId}>\n` +
-                                `**Removed Username:** \`${username}\`\n` +
+                                `**Removed Username:** \`${exactUsername}\`\n` +
                                 `**Remaining Slots:** ${updatedUsernames.length}\n` +
                                 `**Remaining Usernames:** ${updatedUsernames.map(u => `\`${u}\``).join(', ')}`
                             )]
@@ -124,7 +134,7 @@ module.exports = {
                 await interaction.editReply({
                     embeds: [embedBuilder.successEmbed(
                         'Slot Removed',
-                        `Successfully removed \`${username}\` from Server ${serverId}.\n\n` +
+                        `Successfully removed \`${exactUsername}\` from Server ${serverId}.\n\n` +
                         `<@${userId}> still has ${updatedUsernames.length} slot(s) remaining:\n` +
                         updatedUsernames.map(u => `• \`${u}\``).join('\n')
                     )]
