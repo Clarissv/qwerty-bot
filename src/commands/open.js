@@ -62,7 +62,7 @@ module.exports = {
             // Create role for this server
             const role = await interaction.guild.roles.create({
                 name: `Server ${server.serverId} Member`,
-                color: 'Random',
+                color: Math.floor(Math.random() * 0xFFFFFF),
                 reason: `Server ${server.serverId} opened by ${interaction.user.tag}`
             });
 

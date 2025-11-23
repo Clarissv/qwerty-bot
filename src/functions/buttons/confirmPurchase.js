@@ -59,6 +59,17 @@ module.exports = {
                 });
             }
 
+            // Fetch staff role to ensure it's cached
+            const staffRole = await interaction.guild.roles.fetch(config.staffRoleId).catch(() => null);
+            if (!staffRole) {
+                return interaction.editReply({
+                    embeds: [embedBuilder.errorEmbed(
+                        'Configuration Error',
+                        'Staff role not found. Please reconfigure the staff role.'
+                    )]
+                });
+            }
+
             // Create ticket channel
             let ticketChannel;
             try {

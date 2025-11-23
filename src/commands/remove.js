@@ -38,8 +38,7 @@ module.exports = {
             }
 
             // Find purchase with this username in this server
-            const db = await database.getDatabase();
-            const purchase = await db.collection('purchases').findOne({
+            const purchase = await database.db.collection('purchases').findOne({
                 serverId: serverId,
                 robloxUsernames: username,
                 isActive: true
@@ -62,7 +61,7 @@ module.exports = {
 
             if (updatedUsernames.length === 0) {
                 // If this was the only username, delete the entire purchase
-                await db.collection('purchases').deleteOne({ _id: purchase._id });
+                await database.db.collection('purchases').deleteOne({ _id: purchase._id });
 
                 // Remove role from user if they have it
                 const guild = interaction.guild;
@@ -99,7 +98,7 @@ module.exports = {
                 });
             } else {
                 // Update the purchase with remaining usernames
-                await db.collection('purchases').updateOne(
+                await database.db.collection('purchases').updateOne(
                     { _id: purchase._id },
                     { $set: { robloxUsernames: updatedUsernames } }
                 );

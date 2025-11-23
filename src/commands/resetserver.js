@@ -76,10 +76,8 @@ module.exports = {
 
             // Clear tickets and purchases if requested
             if (clearData) {
-                const db = await database.getDatabase();
-                
                 // Get ticket channels before clearing
-                const tickets = await db.collection('tickets').find({ serverId: serverId }).toArray();
+                const tickets = await database.db.collection('tickets').find({ serverId: serverId }).toArray();
                 
                 // Delete ticket channels
                 for (const ticket of tickets) {
@@ -93,16 +91,15 @@ module.exports = {
                     }
                 }
 
-                const ticketsResult = await db.collection('tickets').deleteMany({ serverId: serverId });
+                const ticketsResult = await database.db.collection('tickets').deleteMany({ serverId: serverId });
                 ticketsCleared = ticketsResult.deletedCount;
 
-                const purchasesResult = await db.collection('purchases').deleteMany({ serverId: serverId });
+                const purchasesResult = await database.db.collection('purchases').deleteMany({ serverId: serverId });
                 purchasesCleared = purchasesResult.deletedCount;
             }
 
             // Delete server from database
-            const db = await database.getDatabase();
-            await db.collection('servers').deleteOne({ serverId: serverId });
+            await database.db.collection('servers').deleteOne({ serverId: serverId });
 
             // Get config for audit log
             const config = await database.getConfig();
